@@ -62,11 +62,21 @@ async function copyText(text){
 document.getElementById("generateBtn").addEventListener("click",async()=>{
   state.notes=document.getElementById("styleNotes").value;persist();
   if(!state.selected.length&&!state.custom.length){toast("Marcá al menos un ingrediente.");return;}
-  const prompt=makePrompt(),ok=await copyText(prompt);
-  if(ok)toast("Solicitud copiada. Abrimos ChatGPT para que la pegues y la envíes.");
-  else toast("No se pudo copiar automáticamente. Se abrirá ChatGPT; podés copiar la solicitud desde el botón nuevamente.");
-  window.open("https://chatgpt.com/","_blank","noopener");
-  if(!ok){window.prompt("Copiá esta solicitud y pegala en ChatGPT:",prompt);}
+  const prompt=makePrompt();
+  // Abrimos la pestaña de forma síncrona (durante el clic) para evitar el bloqueo
+  // de ventanas emergentes y enviamos el texto como consulta precompletada.
+  const chatUrl="https://chatgpt.com/?q="+encodeURIComponent(prompt);
+  const chatTab=window.open(chatUrl,"_blank");
+  if(chatTab){try{chatTab.opener=null;}catch{}}
+  const copied=await copyText(prompt);
+  if(!chatTab){
+    // Si el navegador bloqueó la pestaña, mostramos el texto para copiarlo manualmente.
+    window.prompt("El navegador bloqueó la nueva pestaña. Copiá esta solicitud y pegala en ChatGPT:",prompt);
+  }else if(copied){
+    toast("Solicitud preparada en ChatGPT y copiada como respaldo. Solo falta enviarla.");
+  }else{
+    toast("Solicitud preparada en ChatGPT. Si no aparece el texto, volvé y copiá la solicitud desde el botón.");
+  }
 });
 document.getElementById("addIngredient").addEventListener("click",()=>{
  const input=document.getElementById("customIngredient"),v=input.value.trim();
