@@ -1,15 +1,21 @@
 const GROUPS = [
-  {name:"Verduras y aromáticos",items:["Berenjena","Cebolla","Ajo","Tomate","Morrón","Zanahoria","Limón","Papa","Zapallo","Perejil","Menta","Cilantro"]},
-  {name:"Cereales y legumbres",items:["Arroz","Lentejas","Garbanzos","Harina","Cuscús","Bulgur","Fideos","Pan"]},
-  {name:"Lácteos y huevos",items:["Leche","Yogur natural","Queso crema","Ricota","Queso rallado","Huevos","Manteca"]},
-  {name:"Carnes y proteínas",items:["Carne molida","Carne de vaca","Pollo","Cerdo","Pescado","Atún"]},
-  {name:"Frutos secos y semillas",items:["Nueces","Almendras","Maní","Sésamo","Pasas de uva"]},
-  {name:"Especias y condimentos",items:["Comino","Canela","Cúrcuma","Pimienta negra","Pimentón","Ají molido","Orégano","Curry","Coriandro","Nuez moscada","Aceite de oliva","Miel","Vinagre"]}
+  {name:"Verduras y hortalizas",items:["Berenjena","Tomate","Tomate cherry","Cebolla","Cebolla morada","Cebolla de verdeo","Ajo","Puerro","Morrón rojo","Morrón verde","Zanahoria","Papa","Batata","Zapallo","Calabaza","Zucchini","Pepino","Remolacha","Rabanito","Brócoli","Coliflor","Repollo","Espinaca","Acelga","Lechuga","Rúcula","Choclo","Arvejas","Chauchas","Apio","Hinojo","Hongos / champiñones"]},
+  {name:"Frutas y cítricos",items:["Limón","Naranja","Mandarina","Lima","Manzana","Pera","Banana","Palta","Durazno","Ciruela","Uvas","Pasas de uva","Dátiles","Higos","Coco","Ananá"]},
+  {name:"Hierbas frescas y aromáticos",items:["Perejil","Cilantro","Menta","Albahaca","Orégano fresco","Romero","Tomillo","Eneldo","Salvia","Laurel","Jengibre fresco","Ají fresco"]},
+  {name:"Cereales, pastas y panificados",items:["Arroz","Arroz integral","Fideos","Pasta corta","Harina de trigo","Harina integral","Harina de maíz","Polenta","Cuscús","Bulgur","Quinoa","Avena","Pan","Pan rallado","Tortillas / rapiditas","Masa de tarta","Masa de hojaldre"]},
+  {name:"Legumbres",items:["Lentejas","Garbanzos","Porotos negros","Porotos blancos","Porotos colorados","Porotos mung","Arvejas partidas","Soja texturizada","Hummus"]},
+  {name:"Carnes, pescados y otras proteínas",items:["Carne molida","Carne de vaca","Bife / churrasco","Pollo","Pata y muslo","Pechuga de pollo","Cerdo","Carne de cordero","Chorizo","Panceta","Jamón","Atún en lata","Sardinas","Merluza","Pescado fresco","Langostinos","Huevos","Tofu"]},
+  {name:"Lácteos y alternativas",items:["Leche","Yogur natural","Queso crema","Ricota","Queso rallado","Queso duro","Mozzarella","Queso feta","Queso azul","Crema de leche","Manteca","Leche de coco"]},
+  {name:"Frutos secos y semillas",items:["Nueces","Almendras","Maní","Castañas de cajú","Pistachos","Avellanas","Sésamo","Semillas de girasol","Semillas de zapallo","Chía","Lino","Tahini"]},
+  {name:"Especias y condimentos",items:["Sal","Pimienta negra","Comino","Coriandro","Canela","Cúrcuma","Pimentón dulce","Pimentón ahumado","Ají molido","Chile / cayena","Curry","Garam masala","Nuez moscada","Clavo de olor","Cardamomo","Anís","Zaatar","Sumac","Orégano seco","Ajo en polvo","Cebolla en polvo"]},
+  {name:"Salsas, aceites y básicos",items:["Aceite de oliva","Aceite neutro","Vinagre","Vinagre balsámico","Aceto","Salsa de soja","Salsa teriyaki","Salsa de pescado","Sriracha / salsa picante","Mostaza","Mayonesa","Miel","Azúcar","Azúcar negra","Extracto de tomate","Caldo","Aceitunas","Alcaparras","Pepinillos","Salsa de tomate"]},
+  {name:"Conservas y congelados",items:["Tomates en lata","Choclo en lata","Arvejas en lata","Garbanzos en lata","Porotos en lata","Pimientos asados","Verduras congeladas","Espinaca congelada","Frutos rojos congelados"]}
 ];
 const REGIONS = [
-  ["Sorpresa","✨"],["Italia","🇮🇹"],["Medio Oriente","🌙"],["Turquía","🇹🇷"],["Persia / Irán","🇮🇷"],
-  ["Levante","🫒"],["Magreb","☀️"],["India","🇮🇳"],["Mediterráneo","🌿"],["Francia","🇫🇷"],
-  ["España","🇪🇸"],["Asia oriental","🥢"],["Latinoamérica","🌎"]
+  ["Sorpresa","✨"],["Italia","🇮🇹"],["Grecia y Mediterráneo oriental","🫒"],["España","🇪🇸"],["Portugal","🇵🇹"],["Francia","🇫🇷"],["Europa central","🥨"],["Europa oriental y Balcanes","🌾"],
+  ["Turquía","🇹🇷"],["Levante (Líbano, Siria, Palestina)","🫓"],["Persia / Irán","🌹"],["Península arábiga","🌙"],["Magreb (Marruecos, Túnez, Argelia)","☀️"],["África occidental","🥜"],["África oriental y Etiopía","🌍"],
+  ["India del norte","🇮🇳"],["India del sur","🌶️"],["Pakistán y Bangladesh","🍛"],["China","🥢"],["Japón","🇯🇵"],["Corea","🇰🇷"],["Tailandia","🇹🇭"],["Vietnam","🇻🇳"],["Sudeste asiático","🌴"],
+  ["México","🇲🇽"],["Centroamérica","🌽"],["Caribe","🏝️"],["Andes","⛰️"],["Cono Sur","🧉"],["Brasil","🇧🇷"],["Estados Unidos (Cajún y sureña)","🍗"]
 ];
 const DEFAULTS = ["Berenjena","Cebolla","Ajo","Tomate","Morrón","Limón","Papa","Zapallo","Arroz","Huevos","Carne molida","Comino","Canela","Cúrcuma","Pimienta negra","Pimentón","Ají molido","Orégano","Aceite de oliva"];
 const KEY = "miCocina.v1";
