@@ -62,20 +62,33 @@ async function copyText(text){
 document.getElementById("generateBtn").addEventListener("click",async()=>{
   state.notes=document.getElementById("styleNotes").value;persist();
   if(!state.selected.length&&!state.custom.length){toast("Marcá al menos un ingrediente.");return;}
+
   const prompt=makePrompt();
-  // Abrimos la pestaña de forma síncrona (durante el clic) para evitar el bloqueo
-  // de ventanas emergentes y enviamos el texto como consulta precompletada.
   const chatUrl="https://chatgpt.com/?q="+encodeURIComponent(prompt);
-  const chatTab=window.open(chatUrl,"_blank");
-  if(chatTab){try{chatTab.opener=null;}catch{}}
+
+  // Primero copiamos la solicitud. Esperar la copia evita que la navegación
+  // interrumpa el acceso al portapapeles en navegadores móviles.
   const copied=await copyText(prompt);
-  if(!chatTab){
-    // Si el navegador bloqueó la pestaña, mostramos el texto para copiarlo manualmente.
-    window.prompt("El navegador bloqueó la nueva pestaña. Copiá esta solicitud y pegala en ChatGPT:",prompt);
-  }else if(copied){
-    toast("Solicitud preparada en ChatGPT y copiada como respaldo. Solo falta enviarla.");
+
+  if(!copied){
+    window.prompt("No se pudo copiar automáticamente. Copiá esta solicitud:",prompt);
+  }
+
+  const ua=navigator.userAgent||"";
+  const isAndroid=/Android/i.test(ua);
+  const isIOS=/iPhone|iPad|iPod/i.test(ua);
+
+  if(isAndroid){
+    // Android: intenta abrir la aplicación oficial. Chrome usa la URL de
+    // respaldo si la app no está instalada o no puede manejar el enlace.
+    const fallback=encodeURIComponent(chatUrl);
+    const intentUrl="intent://chatgpt.com/?q="+encodeURIComponent(prompt)+
+      "#Intent;scheme=https;package=com.openai.chatgpt;S.browser_fallback_url="+fallback+";end";
+    window.location.href=intentUrl;
   }else{
-    toast("Solicitud preparada en ChatGPT. Si no aparece el texto, volvé y copiá la solicitud desde el botón.");
+    // iOS deriva los enlaces universales a la app si está instalada;
+    // en caso contrario, abre ChatGPT en Safari/navegador.
+    window.location.href=chatUrl;
   }
 });
 document.getElementById("addIngredient").addEventListener("click",()=>{
