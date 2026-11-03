@@ -1,7 +1,7 @@
 const GROUPS = [
-  {name:"Verduras y hortalizas",items:["Berenjena","Tomate","Tomate cherry","Cebolla","Cebolla morada","Cebolla de verdeo","Ajo","Puerro","Morrón rojo","Morrón verde","Zanahoria","Papa","Batata","Zapallo","Calabaza","Zucchini","Pepino","Remolacha","Rabanito","Brócoli","Coliflor","Repollo","Espinaca","Acelga","Lechuga","Rúcula","Choclo","Arvejas","Chauchas","Apio","Hinojo","Hongos / champiñones"]},
+  {name:"Verduras y hortalizas",items:["Berenjena","Tomate","Tomate cherry","Cebolla","Cebolla morada","Cebolla de verdeo","Ajo","Puerro","Morrón","Morrón rojo","Morrón verde","Zanahoria","Papa","Batata","Zapallo","Calabaza","Zucchini","Pepino","Remolacha","Rabanito","Brócoli","Coliflor","Repollo","Espinaca","Acelga","Lechuga","Rúcula","Choclo","Arvejas","Chauchas","Apio","Hinojo","Hongos / champiñones"]},
   {name:"Frutas y cítricos",items:["Limón","Naranja","Mandarina","Lima","Manzana","Pera","Banana","Palta","Durazno","Ciruela","Uvas","Pasas de uva","Dátiles","Higos","Coco","Ananá"]},
-  {name:"Hierbas frescas y aromáticos",items:["Perejil","Cilantro","Menta","Albahaca","Orégano fresco","Romero","Tomillo","Eneldo","Salvia","Laurel","Jengibre fresco","Ají fresco"]},
+  {name:"Hierbas frescas y aromáticos",items:["Perejil","Cilantro","Menta","Albahaca","Orégano","Orégano fresco","Romero","Tomillo","Eneldo","Salvia","Laurel","Jengibre fresco","Ají fresco"]},
   {name:"Cereales, pastas y panificados",items:["Arroz","Arroz integral","Fideos","Pasta corta","Harina de trigo","Harina integral","Harina de maíz","Polenta","Cuscús","Bulgur","Quinoa","Avena","Pan","Pan rallado","Tortillas / rapiditas","Masa de tarta","Masa de hojaldre"]},
   {name:"Legumbres",items:["Lentejas","Garbanzos","Porotos negros","Porotos blancos","Porotos colorados","Porotos mung","Arvejas partidas","Soja texturizada","Hummus"]},
   {name:"Carnes, pescados y otras proteínas",items:["Carne molida","Carne de vaca","Bife / churrasco","Pollo","Pata y muslo","Pechuga de pollo","Cerdo","Carne de cordero","Chorizo","Panceta","Jamón","Atún en lata","Sardinas","Merluza","Pescado fresco","Langostinos","Huevos","Tofu"]},
@@ -30,8 +30,16 @@ function persist(){localStorage.setItem(KEY,JSON.stringify(state));}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function renderGroups(){
   const root=document.getElementById("ingredientGroups");
-  root.innerHTML=GROUPS.map((g,i)=>`<div class="group"><h3>${g.name}</h3><div class="check-grid">${g.items.map(item=>`<label class="ingredient"><input type="checkbox" data-ingredient="${esc(item)}" ${state.selected.includes(item)?"checked":""}><span>${esc(item)}</span></label>`).join("")}</div></div>`).join("");
-  root.querySelectorAll("input").forEach(el=>el.addEventListener("change",()=>{const x=el.dataset.ingredient;state.selected=el.checked?[...new Set([...state.selected,x])]:state.selected.filter(v=>v!==x);persist();updateCount();}));
+  root.innerHTML=GROUPS.map((g,i)=>`<details class="group"><summary class="group-summary"><span>${esc(g.name)}</span><span class="group-meta" data-group-count="${i}"></span></summary><div class="check-grid">${g.items.map(item=>`<label class="ingredient"><input type="checkbox" data-ingredient="${esc(item)}" ${state.selected.includes(item)?"checked":""}><span>${esc(item)}</span></label>`).join("")}</div></details>`).join("");
+  root.querySelectorAll("input[data-ingredient]").forEach(el=>el.addEventListener("change",()=>{const x=el.dataset.ingredient;state.selected=el.checked?[...new Set([...state.selected,x])]:state.selected.filter(v=>v!==x);persist();updateCount();updateCategoryCounts();}));
+  updateCategoryCounts();
+}
+function updateCategoryCounts(){
+  document.querySelectorAll("[data-group-count]").forEach(el=>{
+    const group=GROUPS[Number(el.dataset.groupCount)];
+    const selected=group.items.filter(item=>state.selected.includes(item)).length;
+    el.textContent=selected?`${selected} seleccionados`:"";
+  });
 }
 function renderCustom(){
   document.getElementById("customList").innerHTML=state.custom.map((x,i)=>`<span class="chip">${esc(x)} <button data-remove="${i}" aria-label="Quitar ${esc(x)}">×</button></span>`).join("");
@@ -70,27 +78,14 @@ document.getElementById("generateBtn").addEventListener("click",async()=>{
   if(!state.selected.length&&!state.custom.length){toast("Marcá al menos un ingrediente.");return;}
 
   const prompt=makePrompt();
+  const chatUrl="https://chatgpt.com/?q="+encodeURIComponent(prompt);
 
-  // Web Share abre el selector nativo del sistema. Se invoca directamente
-  // desde el toque del usuario para conservar la autorización del navegador.
-  if(navigator.share){
-    try{
-      await navigator.share({title:"Mi Cocina — solicitud de recetas",text:prompt});
-    }catch(error){
-      // Cerrar el menú de compartir es una cancelación normal: no redirigimos.
-      if(error.name!=="AbortError")toast("No se pudo compartir. Probá copiar la solicitud.");
-    }
-    return;
-  }
-
-  // Respaldo para navegadores sin Web Share: copiar y abrir ChatGPT en web.
+  // Copiamos primero la solicitud y luego abrimos ChatGPT con el texto listo.
   const copied=await copyText(prompt);
-  if(copied){
-    toast("Solicitud copiada. Pegala en ChatGPT.");
-    window.location.href="https://chatgpt.com/?q="+encodeURIComponent(prompt);
-  }else{
-    window.prompt("No se pudo compartir ni copiar automáticamente. Copiá esta solicitud:",prompt);
+  if(!copied){
+    window.prompt("No se pudo copiar automáticamente. Copiá esta solicitud:",prompt);
   }
+  window.location.href=chatUrl;
 });
 document.getElementById("addIngredient").addEventListener("click",()=>{
  const input=document.getElementById("customIngredient"),v=input.value.trim();
