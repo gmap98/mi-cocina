@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#26352d">
+  <meta name="description" content="Tu despensa, tus regiones favoritas y nuevas ideas para cocinar.">
+  <title>Mi Cocina</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Mi Cocina, inicio">
+      <span class="brand-mark">✳</span><span>MI COCINA</span>
+    </a>
+    <button id="installBtn" class="install-btn" hidden>＋ Instalar</button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow">TU RECETARIO PERSONAL</div>
+      <h1>¿Qué cocinamos<br><em>hoy?</em></h1>
+      <p>Partí de lo que tenés. Explorá una región. Descubrí algo nuevo.</p>
+      <div class="hero-note"><span>✦</span> Sin API, sin suscripciones adicionales.</div>
+    </section>
+
+    <section class="panel" id="pantryPanel">
+      <div class="section-heading">
+        <div><span class="step">01 / DESPENSA</span><h2>¿Qué tenés a mano?</h2></div>
+        <span class="count" id="ingredientCount">0 seleccionados</span>
+      </div>
+      <p class="muted">Marcá tus ingredientes. Tu selección queda guardada en este dispositivo.</p>
+      <div id="ingredientGroups"></div>
+      <div class="custom-row">
+        <input id="customIngredient" type="text" placeholder="Agregar otro ingrediente…" maxlength="50">
+        <button id="addIngredient" class="add-btn" aria-label="Agregar ingrediente">+</button>
+      </div>
+      <div id="customList" class="chips"></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div><span class="step">02 / INSPIRACIÓN</span><h2>Elegí una región</h2></div>
+      </div>
+      <div id="regionGrid" class="region-grid"></div>
+      <label class="field-label" for="styleNotes">¿Alguna preferencia? <span>(opcional)</span></label>
+      <input id="styleNotes" class="text-field" type="text" placeholder="Ej. algo económico, sin horno, rápido…">
+      <button id="generateBtn" class="primary-btn">Preparar mis 3 recetas <span>↗</span></button>
+      <p class="fineprint">Se abrirá ChatGPT con una solicitud lista para enviar. La generación ocurre allí, usando tu cuenta habitual.</p>
+    </section>
+
+    <section class="panel howto">
+      <span class="step">03 / CÓMO CONTINUAR</span>
+      <h2>De la despensa al plato</h2>
+      <ol>
+        <li><b>Prepará la solicitud.</b> Tocá el botón y se copiará el texto.</li>
+        <li><b>Enviá en ChatGPT.</b> Si no se abre automáticamente, pegá el texto en un chat.</li>
+        <li><b>Elegí una de las tres.</b> ChatGPT desarrollará la receta completa cuando la selecciones.</li>
+        <li><b>Guardala acá.</b> Copiá la receta terminada y pegala en tu recetario.</li>
+      </ol>
+      <button id="saveRecipeToggle" class="secondary-btn">＋ Guardar una receta de ChatGPT</button>
+      <div id="saveRecipeArea" class="save-area" hidden>
+        <label class="field-label" for="recipeTitle">Nombre de la receta</label>
+        <input id="recipeTitle" class="text-field" placeholder="Ej. Berenjenas rellenas">
+        <label class="field-label" for="recipeText">Pegá la receta completa</label>
+        <textarea id="recipeText" class="text-field textarea" rows="6" placeholder="Pegá aquí la respuesta de ChatGPT…"></textarea>
+        <button id="saveRecipeBtn" class="primary-btn">Guardar en mi recetario</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div><span class="step">04 / TU COLECCIÓN</span><h2>Recetas guardadas</h2></div>
+        <span class="count" id="recipeCount">0 recetas</span>
+      </div>
+      <div id="recipeList" class="recipe-list">
+        <p class="empty">Todavía no guardaste recetas. Cuando encuentres una que te guste, podés traerla desde ChatGPT.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span class="brand-mark">✳</span>
+    <p>MI COCINA · Hecho para cocinar con lo que hay.</p>
+    <button id="clearData" class="text-btn">Borrar datos locales</button>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
