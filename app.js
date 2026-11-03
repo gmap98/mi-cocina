@@ -74,22 +74,10 @@ document.getElementById("generateBtn").addEventListener("click",async()=>{
     window.prompt("No se pudo copiar automáticamente. Copiá esta solicitud:",prompt);
   }
 
-  const ua=navigator.userAgent||"";
-  const isAndroid=/Android/i.test(ua);
-  const isIOS=/iPhone|iPad|iPod/i.test(ua);
-
-  if(isAndroid){
-    // Android: intenta abrir la aplicación oficial. Chrome usa la URL de
-    // respaldo si la app no está instalada o no puede manejar el enlace.
-    const fallback=encodeURIComponent(chatUrl);
-    const intentUrl="intent://chatgpt.com/?q="+encodeURIComponent(prompt)+
-      "#Intent;scheme=https;package=com.openai.chatgpt;S.browser_fallback_url="+fallback+";end";
-    window.location.href=intentUrl;
-  }else{
-    // iOS deriva los enlaces universales a la app si está instalada;
-    // en caso contrario, abre ChatGPT en Safari/navegador.
-    window.location.href=chatUrl;
-  }
+  // Usamos el enlace HTTPS verificado de ChatGPT. Android puede derivarlo
+  // a la app oficial si "Abrir enlaces compatibles" está habilitado; si no,
+  // el sistema lo abrirá en el navegador. El prompt ya quedó copiado arriba.
+  window.location.href=chatUrl;
 });
 document.getElementById("addIngredient").addEventListener("click",()=>{
  const input=document.getElementById("customIngredient"),v=input.value.trim();
