@@ -64,20 +64,27 @@ document.getElementById("generateBtn").addEventListener("click",async()=>{
   if(!state.selected.length&&!state.custom.length){toast("Marcá al menos un ingrediente.");return;}
 
   const prompt=makePrompt();
-  const chatUrl="https://chatgpt.com/?q="+encodeURIComponent(prompt);
 
-  // Primero copiamos la solicitud. Esperar la copia evita que la navegación
-  // interrumpa el acceso al portapapeles en navegadores móviles.
-  const copied=await copyText(prompt);
-
-  if(!copied){
-    window.prompt("No se pudo copiar automáticamente. Copiá esta solicitud:",prompt);
+  // Web Share abre el selector nativo del sistema. Se invoca directamente
+  // desde el toque del usuario para conservar la autorización del navegador.
+  if(navigator.share){
+    try{
+      await navigator.share({title:"Mi Cocina — solicitud de recetas",text:prompt});
+    }catch(error){
+      // Cerrar el menú de compartir es una cancelación normal: no redirigimos.
+      if(error.name!=="AbortError")toast("No se pudo compartir. Probá copiar la solicitud.");
+    }
+    return;
   }
 
-  // Usamos el enlace HTTPS verificado de ChatGPT. Android puede derivarlo
-  // a la app oficial si "Abrir enlaces compatibles" está habilitado; si no,
-  // el sistema lo abrirá en el navegador. El prompt ya quedó copiado arriba.
-  window.location.href=chatUrl;
+  // Respaldo para navegadores sin Web Share: copiar y abrir ChatGPT en web.
+  const copied=await copyText(prompt);
+  if(copied){
+    toast("Solicitud copiada. Pegala en ChatGPT.");
+    window.location.href="https://chatgpt.com/?q="+encodeURIComponent(prompt);
+  }else{
+    window.prompt("No se pudo compartir ni copiar automáticamente. Copiá esta solicitud:",prompt);
+  }
 });
 document.getElementById("addIngredient").addEventListener("click",()=>{
  const input=document.getElementById("customIngredient"),v=input.value.trim();
